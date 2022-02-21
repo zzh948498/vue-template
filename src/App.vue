@@ -29,7 +29,7 @@ onBeforeMount(() => {
     <router-view></router-view>
     <ReloadPrompt />
     <br />
-    test0
+    test2
     <br />
     <button @click="runWorker">Ping web worker</button>
     &#160;&#160;
