@@ -10,15 +10,19 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "lib": [
-      "esnext",
-      "dom"
+      "ESNext",
+      "DOM",
+      "WebWorker"
     ],
     "baseUrl": "./",
     "paths": {
       "@/*": [
         "src/*"
       ]
-    }
+    },
+    "types": [
+      "vite-plugin-pwa/client"
+    ]
   },
   "include": [
     "src/**/*.ts",
