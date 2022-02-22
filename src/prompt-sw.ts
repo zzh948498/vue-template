@@ -15,3 +15,71 @@ cleanupOutdatedCaches();
 
 // to allow work offline
 registerRoute(new NavigationRoute(createHandlerBoundToURL('index.html')));
+async function getEndpoint() {
+    const subscription = await self.registration.pushManager.getSubscription();
+    console.log(subscription?.endpoint);
+    await subscribeUser();
+}
+
+// Register event listener for the ‘push’ event.
+self.addEventListener('push', function (event) {
+    // Keep the service worker alive until the notification is created.
+    event.waitUntil(
+        getEndpoint()
+            .then(function (endpoint) {
+                // Retrieve the textual payload from the server using a GET request. We are using the endpoint as an unique ID
+                // of the user for simplicity.
+                return fetch('./getPayload?endpoint=' + endpoint);
+            })
+            .then(function (response) {
+                return response.text();
+            })
+            .then(function (payload) {
+                // Show a notification with title ‘ServiceWorker Cookbook’ and use the payload as the body.
+                self.registration.showNotification('ServiceWorker Cookbook', {
+                    body: payload,
+                });
+            })
+    );
+});
+// self.addEventListener('push', async function (event) {
+//     // 检查服务端是否发来了任何有效载荷数据
+//     console.log('event.data:', event.data?.text()); // event.data: {"msg":"this is a test","url":"https://www.baidu.com/","icon":"./app.png"}
+//     const payload = event.data ? event.data.text() : 'no payload';
+//     console.log(payload); // {msg: "this is a test", url: "https://www.baidu.com/", icon: "./app.png"}
+//     const title = 'Progressive Times';
+
+//     const sub = await self.registration.pushManager.getSubscription();
+//     console.log({ sub });
+
+//     await subscribeUser();
+//     // 使用提供的信息来显示 Web 推送通知
+
+//     const result = await self.registration.showNotification(title, {
+//         body: payload,
+//         data: 'https://www.baidu.com/',
+//         // icon: payload.icon,
+//     });
+//     console.log({ result });
+// });
+async function subscribeUser() {
+    const applicationServerPublicKey =
+        'BH30tDD_Q9brxNYBqGalmU4xLdPgLSjp--PIQH6xjaaeALV7XQGIXJOaJZTY40xuKURefiRLJiPrt1DhrpYIcDQ';
+    const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+    return await self.registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: applicationServerKey,
+    });
+}
+function urlB64ToUint8Array(base64String: string) {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+
+    const rawData = atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}

@@ -5,8 +5,10 @@ import { onBeforeMount, ref } from 'vue';
 const pong = ref('');
 const mode = ref('');
 const worker = new MyWorker();
+
 const runWorker = async () => {
     worker.postMessage('ping');
+    console.log(worker);
 };
 const resetMessage = async () => {
     worker.postMessage('clear');
@@ -29,7 +31,7 @@ onBeforeMount(() => {
     <router-view></router-view>
     <ReloadPrompt />
     <br />
-    test2
+    test5
     <br />
     <button @click="runWorker">Ping web worker</button>
     &#160;&#160;
