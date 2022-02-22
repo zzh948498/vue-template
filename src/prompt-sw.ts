@@ -15,6 +15,7 @@ cleanupOutdatedCaches();
 
 // to allow work offline
 registerRoute(new NavigationRoute(createHandlerBoundToURL('index.html')));
+
 async function getEndpoint() {
     const subscription = await self.registration.pushManager.getSubscription();
     console.log(subscription?.endpoint);
@@ -42,26 +43,6 @@ self.addEventListener('push', function (event) {
             })
     );
 });
-// self.addEventListener('push', async function (event) {
-//     // 检查服务端是否发来了任何有效载荷数据
-//     console.log('event.data:', event.data?.text()); // event.data: {"msg":"this is a test","url":"https://www.baidu.com/","icon":"./app.png"}
-//     const payload = event.data ? event.data.text() : 'no payload';
-//     console.log(payload); // {msg: "this is a test", url: "https://www.baidu.com/", icon: "./app.png"}
-//     const title = 'Progressive Times';
-
-//     const sub = await self.registration.pushManager.getSubscription();
-//     console.log({ sub });
-
-//     await subscribeUser();
-//     // 使用提供的信息来显示 Web 推送通知
-
-//     const result = await self.registration.showNotification(title, {
-//         body: payload,
-//         data: 'https://www.baidu.com/',
-//         // icon: payload.icon,
-//     });
-//     console.log({ result });
-// });
 async function subscribeUser() {
     const applicationServerPublicKey =
         'BH30tDD_Q9brxNYBqGalmU4xLdPgLSjp--PIQH6xjaaeALV7XQGIXJOaJZTY40xuKURefiRLJiPrt1DhrpYIcDQ';
